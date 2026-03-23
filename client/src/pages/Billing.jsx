@@ -26,70 +26,58 @@ const Billing = () => {
         e.preventDefault();
         setLoading(true);
 
+        const orderPayload = {
+            user: shippingDetails,
+            products: cartItems.map(item => ({
+                product: { name: item.name, image: item.image },
+                quantity: item.quantity,
+                price: item.price
+            })),
+            subtotal: getCartTotal(),
+            deliveryCharge: deliveryCharge,
+            tax: tax,
+            totalAmount: finalTotal,
+            paymentMethod: paymentMethod
+        };
+
         try {
-            const orderPayload = {
-                user: shippingDetails,
-                products: cartItems.map(item => ({
-                    product: { name: item.name, image: item.image },
-                    quantity: item.quantity,
-                    price: item.price
-                })),
-                subtotal: getCartTotal(),
-                deliveryCharge: deliveryCharge,
-                tax: tax,
-                totalAmount: finalTotal,
-                paymentMethod: paymentMethod
-            };
-
             // Save order to backend
-            const response = await api.post('/api/orders', orderPayload);
-            
-            if (response.success) {
-                console.log('Order saved successfully:', response.data);
-            } else {
-                console.log('Order save failed but continuing:', response.message);
-            }
-
-            // Open WhatsApp for whatsapp or cod payment methods
-            if (paymentMethod === 'whatsapp' || paymentMethod === 'cod') {
-                const businessPhone = "919130809064";
-                let message = `🛒 *Order Confirmation Request – Aaharam Agro*\n\n`;
-                message += `Hello,\n\n`;
-                message += `I would like to confirm my order. Please find the details below:\n\n`;
-                message += `👤 *Customer Details*\n`;
-                message += `• Name: ${shippingDetails.name}\n`;
-                message += `• Phone: ${shippingDetails.phone}\n`;
-                message += `• Email: ${shippingDetails.email || 'Not provided'}\n`;
-                message += `• Address: ${shippingDetails.address}\n\n`;
-                message += `🛍️ *Order Items*\n`;
-                cartItems.forEach((item) => {
-                    message += `• ${item.name} (${item.size}) × ${item.quantity} = ₹${item.price * item.quantity}\n`;
-                });
-                message += `\n💳 *Bill Summary*\n`;
-                message += `• Subtotal: ₹${getCartTotal()}\n`;
-                message += `• Delivery Charges: ₹${deliveryCharge}\n`;
-                message += `• GST (5%): ₹${tax}\n`;
-                message += `➡️ *Total Amount: ₹${finalTotal}*\n\n`;
-                message += `💰 *Payment Method:* ${paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}\n\n`;
-                if (response.data?.orderNumber) {
-                    message += `Order ID: ${response.data.orderNumber}\n\n`;
-                }
-                message += `Kindly confirm my order at your earliest convenience.\n\n`;
-                message += `Thank you! 🙏`;
-
-                const encodedMessage = encodeURIComponent(message);
-                window.open(`https://wa.me/${businessPhone}?text=${encodedMessage}`, '_blank');
-            }
-
-            // Navigate to order confirmation
-            clearCart();
-            navigate('/order-confirmation', { state: { orderDetails: orderPayload, finalTotal } });
-            
+            await api.post('/api/orders', orderPayload);
         } catch (err) {
-            console.error('Payment error:', err);
-            setLoading(false);
-            alert('Payment failed. Please try again.');
+            console.log('Order save error (continuing anyway):', err);
         }
+
+        // Open WhatsApp for whatsapp or cod payment methods
+        if (paymentMethod === 'whatsapp' || paymentMethod === 'cod') {
+            const businessPhone = "919130809064";
+            let message = `🛒 *Order Confirmation Request – Aaharam Agro*\n\n`;
+            message += `Hello,\n\n`;
+            message += `I would like to confirm my order. Please find the details below:\n\n`;
+            message += `👤 *Customer Details*\n`;
+            message += `• Name: ${shippingDetails.name}\n`;
+            message += `• Phone: ${shippingDetails.phone}\n`;
+            message += `• Email: ${shippingDetails.email || 'Not provided'}\n`;
+            message += `• Address: ${shippingDetails.address}\n\n`;
+            message += `🛍️ *Order Items*\n`;
+            cartItems.forEach((item) => {
+                message += `• ${item.name} (${item.size}) × ${item.quantity} = ₹${item.price * item.quantity}\n`;
+            });
+            message += `\n💳 *Bill Summary*\n`;
+            message += `• Subtotal: ₹${getCartTotal()}\n`;
+            message += `• Delivery Charges: ₹${deliveryCharge}\n`;
+            message += `• GST (5%): ₹${tax}\n`;
+            message += `➡️ *Total Amount: ₹${finalTotal}*\n\n`;
+            message += `💰 *Payment Method:* ${paymentMethod === 'cod' ? 'Cash on Delivery' : 'WhatsApp Order'}\n\n`;
+            message += `Kindly confirm my order at your earliest convenience.\n\n`;
+            message += `Thank you! 🙏`;
+
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/${businessPhone}?text=${encodedMessage}`, '_blank');
+        }
+
+        // Navigate to order confirmation - ALWAYS
+        clearCart();
+        navigate('/order-confirmation', { state: { orderDetails: orderPayload, finalTotal } });
     };
 
     return (
