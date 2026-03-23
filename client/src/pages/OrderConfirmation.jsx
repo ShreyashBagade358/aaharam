@@ -4,16 +4,11 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 const OrderConfirmation = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { orderDetails, finalTotal, clearCartFn } = location.state || {};
+    const { orderDetails, finalTotal } = location.state || {};
 
     if (!orderDetails) {
         navigate('/');
         return null;
-    }
-
-    // Clear cart when reaching confirmation page
-    if (clearCartFn) {
-        clearCartFn();
     }
 
     const orderNumber = `AAH${Date.now().toString().slice(-8)}`;

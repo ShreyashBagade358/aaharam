@@ -75,9 +75,12 @@ const Billing = () => {
             window.open(`https://wa.me/${businessPhone}?text=${encodedMessage}`, '_blank');
         }
 
-        // Navigate to order confirmation - cart will be cleared from confirmation page
+        // Clear cart after successful order
+        clearCart();
+        
+        // Navigate to order confirmation
         setLoading(false);
-        navigate('/order-confirmation', { state: { orderDetails: orderPayload, finalTotal, clearCartFn: clearCart } });
+        navigate('/order-confirmation', { state: { orderDetails: orderPayload, finalTotal } });
     };
 
     return (
