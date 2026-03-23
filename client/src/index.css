@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed;
+  }
+}
+
+@layer utilities {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .saree-gradient {
+    background: linear-gradient(135deg, #610000 0%, #8b0000 100%);
+  }
+  .liquid-glass {
+    backdrop-filter: blur(24px);
+  }
+  .ghost-border {
+    border-bottom: 1px solid rgba(227, 190, 184, 0.2);
+  }
+  .ghost-border:focus-within {
+    border-bottom: 2px solid #775a00;
+  }
+  .ambient-lift {
+    transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.4s cubic-bezier(0.2, 0, 0, 1);
+  }
+  .ambient-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(139, 0, 0, 0.08);
+  }
+  .fill-surface {
+    fill: #fbf9f5;
+  }
+}
