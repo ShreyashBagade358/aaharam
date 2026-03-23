@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { CartContext } from '../context/CartContext';
+import { api } from '../utils/api';
 
 const Shop = () => {
     const [products, setProducts] = useState([]);
@@ -13,12 +14,8 @@ const Shop = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/products');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch products');
-                }
-                const result = await response.json();
-                const products = result.data || result;
+                const result = await api.get('/api/products');
+                const products = result.data || [];
                 setProducts(products);
                 setLoading(false);
             } catch (err) {
