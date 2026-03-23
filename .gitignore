@@ -35,3 +35,4 @@ npm-debug.log*
 !client/public/logo.png
 !client/public/hero-image.jpg
 !client/public/*.jpeg
+.vercel

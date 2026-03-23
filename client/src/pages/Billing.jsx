@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
+import { api } from '../utils/api';
 
 const Billing = () => {
     const { cartItems, getCartTotal, clearCart } = useContext(CartContext);
@@ -40,12 +41,12 @@ const Billing = () => {
                 paymentMethod: paymentMethod
             };
 
-            // Try to save order to backend
-            fetch('http://localhost:5001/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderPayload)
-            }).catch(err => console.log('Backend order save failed', err));
+            // Save order to backend
+            const response = await api.post('/api/orders', orderPayload);
+            
+            if (!response.success) {
+                console.error('Order save failed:', response.message);
+            }
 
             if (paymentMethod === 'whatsapp' || paymentMethod === 'cod') {
                 // WhatsApp Order Flow

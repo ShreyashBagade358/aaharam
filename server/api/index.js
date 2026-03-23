@@ -20,6 +20,40 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+const dbOptions = {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+};
+
+let isConnected = false;
+
+async function connectDB() {
+    if (!isConnected) {
+        try {
+            await mongoose.connect(MONGO_URI, dbOptions);
+            isConnected = true;
+            console.log('✓ Connected to MongoDB Atlas');
+        } catch (err) {
+            console.error('✗ Database connection error:', err.message);
+            throw err;
+        }
+    }
+}
+
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error('DB Error:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Database connection error'
+        });
+    }
+});
+
 app.get('/health', (req, res) => {
     res.status(200).json({ 
         status: 'OK', 
@@ -46,31 +80,6 @@ app.use((err, req, res, next) => {
         success: false,
         message: message,
     });
-});
-
-const dbOptions = {
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-};
-
-let isConnected = false;
-
-async function connectDB() {
-    if (!isConnected) {
-        await mongoose.connect(MONGO_URI, dbOptions);
-        isConnected = true;
-        console.log('✓ Connected to MongoDB Atlas');
-    }
-}
-
-app.use(async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (err) {
-        next(err);
-    }
 });
 
 module.exports = app;
