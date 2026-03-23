@@ -77,6 +77,7 @@ const Billing = () => {
 
         // Navigate to order confirmation - ALWAYS
         clearCart();
+        setLoading(false);
         navigate('/order-confirmation', { state: { orderDetails: orderPayload, finalTotal } });
     };
 
