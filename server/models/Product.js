@@ -6,8 +6,9 @@ const productSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     image: { type: String, required: true },
     category: { type: String, required: true },
+    tag: { type: String },
     inStock: { type: Boolean, default: true },
-    size: { type: String, required: true } // e.g., '1 Litre', '500 ml'
+    size: { type: String, required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

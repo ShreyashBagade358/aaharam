@@ -1,19 +1,28 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const Product = require('../models/Product');
+const fs = require('fs');
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/aaharam_agro')
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+const productSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    image: { type: String, required: true },
+    category: { type: String, required: true },
+    tag: { type: String },
+    inStock: { type: Boolean, default: true },
+    size: { type: String, required: true }
+}, { timestamps: true });
+
+const Product = mongoose.model('Product', productSchema);
 
 const products = [
     {
         name: 'Groundnut Oil',
         description: 'Cold pressed groundnut oil - pure and natural',
         price: 340,
-        image: '/groundnut.png',
+        image: 'GROUNDNUT_BASE64',
         category: 'nut',
         tag: 'Cold Pressed',
         inStock: true,
@@ -23,7 +32,7 @@ const products = [
         name: 'Safflower Oil',
         description: 'Heart healthy cold pressed safflower oil',
         price: 400,
-        image: '/safflower.png',
+        image: 'SAFFLOWER_BASE64',
         category: 'seed',
         tag: 'Heart Health',
         inStock: true,
@@ -33,7 +42,7 @@ const products = [
         name: 'Sunflower Oil',
         description: 'Organic cold pressed sunflower oil',
         price: 380,
-        image: '/sunflower.png',
+        image: 'SUNFLOWER_BASE64',
         category: 'seed',
         tag: 'Organic',
         inStock: true,
@@ -43,7 +52,7 @@ const products = [
         name: 'Mustard Oil',
         description: 'Heritage cold pressed yellow mustard oil',
         price: 390,
-        image: '/mustard.png',
+        image: 'MUSTARD_BASE64',
         category: 'seed',
         tag: 'Heritage',
         inStock: true,
@@ -53,7 +62,7 @@ const products = [
         name: 'Coconut Oil',
         description: 'Virgin cold pressed coconut oil',
         price: 700,
-        image: '/coconut.png',
+        image: 'COCONUT_BASE64',
         category: 'nut',
         tag: 'Virgin',
         inStock: true,
@@ -63,7 +72,7 @@ const products = [
         name: 'Sesame Oil',
         description: 'Stone pressed sesame oil - aromatic and pure',
         price: 600,
-        image: '/sesame.png',
+        image: 'SESAME_BASE64',
         category: 'seed',
         tag: 'Stone Pressed',
         inStock: true,
@@ -71,17 +80,32 @@ const products = [
     }
 ];
 
-const seedDB = async () => {
+function getBase64Image(imageName) {
     try {
+        const imagePath = `../client/public/${imageName}.png`;
+        const imageBuffer = fs.readFileSync(imagePath);
+        return `data:image/png;base64,${imageBuffer.toString('base64')}`;
+    } catch (error) {
+        console.error(`Error reading ${imageName}.png:`, error);
+        return '';
+    }
+}
+
+const productsWithImages = products.map(p => ({
+    ...p,
+    image: getBase64Image(p.name.replace(' Oil', '').toLowerCase())
+}));
+
+mongoose.connect(process.env.MONGO_URI)
+    .then(async () => {
+        console.log('MongoDB Connected');
         await Product.deleteMany();
         console.log('Products deleted');
-        await Product.insertMany(products);
-        console.log('Database seeded successfully!');
+        await Product.insertMany(productsWithImages);
+        console.log('Database seeded with images!');
         process.exit();
-    } catch (error) {
-        console.error('Error seeding database:', error);
+    })
+    .catch(err => {
+        console.error(err);
         process.exit(1);
-    }
-};
-
-seedDB();
+    });

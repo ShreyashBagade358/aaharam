@@ -64,7 +64,7 @@ const ProductCard = ({ product }) => {
                 />
                 <div className="absolute top-4 left-4">
                     <span className="bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-tertiary border border-tertiary/10">
-                        Cold Pressed
+                        {product.tag || 'Cold Pressed'}
                     </span>
                 </div>
             </div>
