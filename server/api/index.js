@@ -12,7 +12,7 @@ const CLIENT_URL = process.env.CLIENT_URL || 'https://client-six-blush-44.vercel
 const NODE_ENV = process.env.NODE_ENV || 'production';
 
 const corsOptions = {
-    origin: NODE_ENV === 'production' ? CLIENT_URL : '*',
+    origin: '*',
     credentials: true,
 };
 
