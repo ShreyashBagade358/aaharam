@@ -44,12 +44,14 @@ const Billing = () => {
             // Save order to backend
             const response = await api.post('/api/orders', orderPayload);
             
-            if (!response.success) {
-                console.error('Order save failed:', response.message);
+            if (response.success) {
+                console.log('Order saved successfully:', response.data);
+            } else {
+                console.log('Order save failed but continuing:', response.message);
             }
 
+            // Open WhatsApp for whatsapp or cod payment methods
             if (paymentMethod === 'whatsapp' || paymentMethod === 'cod') {
-                // WhatsApp Order Flow
                 const businessPhone = "919130809064";
                 let message = `🛒 *Order Confirmation Request – Aaharam Agro*\n\n`;
                 message += `Hello,\n\n`;
@@ -69,21 +71,22 @@ const Billing = () => {
                 message += `• GST (5%): ₹${tax}\n`;
                 message += `➡️ *Total Amount: ₹${finalTotal}*\n\n`;
                 message += `💰 *Payment Method:* ${paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}\n\n`;
+                if (response.data?.orderNumber) {
+                    message += `Order ID: ${response.data.orderNumber}\n\n`;
+                }
                 message += `Kindly confirm my order at your earliest convenience.\n\n`;
                 message += `Thank you! 🙏`;
 
                 const encodedMessage = encodeURIComponent(message);
                 window.open(`https://wa.me/${businessPhone}?text=${encodedMessage}`, '_blank');
-
-                clearCart();
-                navigate('/order-confirmation', { state: { orderDetails: orderPayload, finalTotal } });
-            } else {
-                // Online Payment Flow
-                clearCart();
-                navigate('/order-confirmation', { state: { orderDetails: orderPayload, finalTotal } });
             }
+
+            // Navigate to order confirmation
+            clearCart();
+            navigate('/order-confirmation', { state: { orderDetails: orderPayload, finalTotal } });
+            
         } catch (err) {
-            console.error(err);
+            console.error('Payment error:', err);
             setLoading(false);
             alert('Payment failed. Please try again.');
         }
