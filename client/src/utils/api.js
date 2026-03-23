@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+const API_URL = 'https://aaharam-tawny.vercel.app';
 
 export const api = {
     async get(endpoint) {

@@ -19,6 +19,6 @@
   "env": {
     "NODE_ENV": "production",
     "MONGO_URI": "mongodb+srv://shreyashbagade358:shreyashbagade358@aaharam.lhg8d1m.mongodb.net/aaharam_agro?retryWrites=true&w=majority",
-    "CLIENT_URL": "https://client-six-blush-44.vercel.app"
+    "CLIENT_URL": "https://aaharam-tawny.vercel.app"
   }
 }
