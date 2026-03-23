@@ -1,31 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { CartContext } from '../context/CartContext';
-import { api } from '../utils/api';
 
 const Shop = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [products] = useState([
+        { _id: '1', name: 'Groundnut Oil', description: 'Cold Pressed Groundnut Oil - pure and natural from Nagpur', price: 340, image: '/groundnut.png', category: 'nut', size: '1 Litre Bottle', tag: 'Cold Pressed' },
+        { _id: '2', name: 'Safflower Oil', description: 'Heart Health Safflower Oil - rich in unsaturated fats', price: 400, image: '/safflower.png', category: 'seed', size: '1 Litre Bottle', tag: 'Heart Health' },
+        { _id: '3', name: 'Sunflower Oil', description: 'Organic Sunflower Oil - cold pressed for maximum nutrition', price: 380, image: '/sunflower.png', category: 'seed', size: '1 Litre Bottle', tag: 'Organic' },
+        { _id: '4', name: 'Mustard Oil', description: 'Heritage Mustard Oil - traditional stone pressed method', price: 390, image: '/mustard.png', category: 'seed', size: '1 Litre Bottle', tag: 'Heritage' },
+        { _id: '5', name: 'Coconut Oil', description: 'Virgin Coconut Oil - pure and unrefined', price: 700, image: '/coconut.png', category: 'organic', size: '1 Litre Bottle', tag: 'Virgin' },
+        { _id: '6', name: 'Sesame Oil', description: 'Stone Pressed Sesame Oil - rich in antioxidants', price: 600, image: '/sesame.png', category: 'seed', size: '1 Litre Bottle', tag: 'Stone Pressed' }
+    ]);
+    const [loading] = useState(false);
     const [activeCategory, setActiveCategory] = useState('all');
     const { cartItems } = useContext(CartContext);
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const result = await api.get('/api/products');
-                const products = result.data || [];
-                setProducts(products);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-
-        fetchProducts();
-    }, []);
 
     const getFilteredProducts = () => {
         if (activeCategory === 'all') return products;
@@ -91,11 +80,6 @@ const Shop = () => {
                 {loading ? (
                     <div className="w-full flex justify-center py-20">
                         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary"></div>
-                    </div>
-                ) : error ? (
-                    <div className="w-full bg-error-container text-on-error-container p-6 rounded-xl text-center">
-                        <h3 className="font-bold text-xl mb-2">Error Loading Products</h3>
-                        <p>{error}</p>
                     </div>
                 ) : (
                     <>
