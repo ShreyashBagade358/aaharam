@@ -47,7 +47,7 @@ const Home = () => {
                         <img
                             alt="Traditional Lakdi Ghani"
                             className="w-full h-[500px] object-cover rounded-xl"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBogp3nZJFpwIw0SNaW7-owdM2tlNmLDNg1aUE3vj-bGYUeDCYkmDn1_Nz6VMJD-UZmxW3QSnTUFDbbCsoGhUE9zGXQqvf9HLBsXVzNsz9VYpgjiuYeV6Y9K8qedLOdqGzAtlzy_TgTC2_ZfrFFx-GdVrP9_j_ZQBTanS4SREtBuRcky8_NUdKQaJq1PigvOtHYnLTtLNyNtYOim931ddIi-D8uKuVW2js9dmXHYGU9dg4WFdldzrvXIbi6v6mrA_2Ikn5ZuYsmLDqf"
+                            src="/banner.jpeg"
                         />
                     </div>
                     <div className="space-y-8">
